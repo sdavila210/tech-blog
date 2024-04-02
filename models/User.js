@@ -1,13 +1,16 @@
+// Import modules from sequelize package, bcrypt model for password hashing, and connection object
 const { Model, DataTypes } = require('sequelize');
 const bcrypt = require('bcrypt');
 const sequelize = require('../config/connection');
 
+// Defines User class that extends Sequelize model and using a method to compare entered password to hashed password.
 class User extends Model {
     checkPassword(loginPw) {
         return bcrypt.compareSync(loginPw, this.password);
     }
 }
 
+// Initializing User model with attributes
 User.init(
     {
         id: {
@@ -37,6 +40,7 @@ User.init(
         },
     },
     {
+        // Hooks hash password before creating and updated user
         hooks: {
             beforeCreate: async (newUserData) => {
                 newUserData.password = await bcrypt.hash(newUserData.password, 10);
